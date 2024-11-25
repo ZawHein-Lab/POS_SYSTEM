@@ -10,17 +10,26 @@
         </div>
     </div>
     <div class="rightNavBar">
-        <h6><?php if (isset($_COOKIE['user'])) {
-    // Decode the JSON string into a PHP associative array
-    $userData = json_decode($_COOKIE['user'], true);
-
-    // Check if the 'username' key exists and display it
-    if (isset($userData['username'])) {
-        echo htmlspecialchars($userData['username']);
-    } else {
-        echo "Username";
-    }
-}?></h6>
+        <h6>
+        <?php 
+         if (isset($_COOKIE['user'])) {
+            // Decode the JSON string into a PHP associative array
+                $userData = json_decode($_COOKIE['user'], true);
+        
+                // Check if the 'username' key exists and display it
+                if (isset($userData['id'])) {
+                    $id = $userData['id'];
+                 $currentUser =   get_user_with_id($mysqli, $id);
+                    echo $currentUser['username'];
+                 }
+                 else {
+                    echo "Username";
+                } 
+                 
+            }
+            
+                  ?>
+        </h6>
         <div class="dropdown">
             <img src="../assets/image/profile.png" id="profileImage" alt="Image" class="dropdown-img">
             <div class="dropdown-menu">

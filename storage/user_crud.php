@@ -1,8 +1,8 @@
 <?php
-function save_user($mysqli, $username, $useremail, $password, $role)
+function save_user($mysqli, $username, $useremail,$profile, $password, $role)
 {
     try {
-        $sql = "INSERT INTO `user`(`username`,`useremail`,`password`,`role`) VALUES('$username', '$useremail', '$password', '$role')";
+        $sql = "INSERT INTO `user`(`username`,`useremail`,`image`,`password`,`role`) VALUES('$username', '$useremail','$profile', '$password', '$role')";
         return $mysqli->query($sql);
     } catch (\Throwable $th) {
         if ($th->getCode() === 1062) {
@@ -18,6 +18,21 @@ function get_user_with_id($mysqli, $id)
     $user = $mysqli->query($sql);
     return $user->fetch_assoc();
 }
+// function update_user($mysqli,$user_name,$user_email,$profile_name,$password,$role,$user_id){
+//     $sql = "UPDATE `user` SET(`username` = '$user_name',`useremail` ='$user_email',`image` = '$profile_name',`password` = '$password',`role` = $role)  WHERE `id`=$user_id";
+//     return $mysqli->query($sql);
+// }
+function update_user($mysqli, $user_name, $user_email, $profile_name, $password, $role, $user_id) {
+    $sql = "UPDATE `user` 
+            SET `username` = '$user_name',
+                `useremail` = '$user_email',
+                `image` = '$profile_name',
+                `password` = '$password',
+                `role` = $role
+            WHERE `id` = $user_id";
+    return $mysqli->query($sql);
+}
+
 function delete_user($mysqli,$id){
     $sql = "DELETE FROM `user` WHERE `id`=$id";
     return $mysqli->query($sql);
@@ -26,6 +41,12 @@ function get_users($mysqli)
 {
     $sql = "SELECT * FROM `user`";
     return $mysqli->query($sql);
+}
+function get_password_with_currentuserid($mysqli,$user_id)
+{
+    $sql = "SELECT `password` FROM `user` WHERE `id`= $user_id";;
+    $user = $mysqli->query($sql);
+    return $user->fetch_assoc();
 }
 function get_data_with_search_data($mysqli,$search){
     $sql = "SELECT * FROM `user` WHERE `username` LIKE '%$search%'";

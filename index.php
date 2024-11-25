@@ -21,8 +21,8 @@ if(!$admin_user){
     $admin_password = password_hash("password",PASSWORD_BCRYPT);
     //  var_dump($admin_password);
     // save_user($mysqli,'adminone','One@gmail.com' ,$admin_password,5);
-    save_user($mysqli,"admin","admin@gmail.com",$admin_password,1);
- } 
+    save_user($mysqli,"admin","admin@gmail.com","profile.png",$admin_password,1);
+ }
  $email = $email_err = $password = $password_err = "";
 //   $pattern = '/^[\w\-\.]+@([\w\-]+\.)+[\w\-]{2,4}$/';
 if (isset($_POST['useremail'])) {
@@ -82,7 +82,7 @@ if (isset($_POST['useremail'])) {
                     <div class="text-danger" style="font-size:12px;"><?= $password_err ?></div>
 
                     <input type="checkbox" name="showPassword" id="showPassword" class="form-check-input">
-                     <label for="showPassword" class="form-label">showPassword</label>
+                    <label for="showPassword" class="form-label">showPassword</label>
 
                     <div class="text-center mt-3">
                         <input type="submit" value="Login" class="btn btn-info w-50">

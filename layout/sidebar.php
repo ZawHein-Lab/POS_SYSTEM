@@ -42,13 +42,13 @@
         <div class="sidebar-sub-menu collapse" id="user-menu-category">
             <div class="sidebar-submenu">
                 <i class="fa fa-user-plus mb-2 me-2 fs-5"></i>
-                <a href="./add_user.php" class="fs-6 text-decoration-none text-white">Add User</a>
+                <a href="./add_category.php" class="fs-6 text-decoration-none text-white">Add Category</a>
             </div>
             <!-- <div class="division"></div> -->
             <div class="sidebar-submenu">
                 <i class="fa fa-list mb-2 me-2 fs-5"></i>
                 <!-- <h6>User List</h6> -->
-                <a href="./user_list.php" class="fs-6 text-decoration-none text-white">User List</a>
+                <a href="./category_list.php" class="fs-6 text-decoration-none text-white">Category List</a>
             </div>
             <div class="division"></div>
         </div>

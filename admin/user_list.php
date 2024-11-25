@@ -52,10 +52,11 @@ $pagination_link = ceil($row_count/3);
                     // var_dump($user_list);
                 ?>
                     <tr>
-                        <td><?= $numberTitle + 1 ?></td>
-                        <td><?= $user_list['username']?></td>
-                        <td><?= $user_list['useremail']?></td>
-                        <td><?php
+                        <td class="align-content-center"><?= $numberTitle + 1 ?></td>
+                        <td class="align-content-center"><?= $user_list['username']?></td>
+                        <td class="align-content-center"><?= $user_list['useremail']?></td>
+                        <td class="align-content-center"> <img class="userImage" src="../assets/image/<?= $user_list['image']?>" style="width: 80px; height: 80px; border-radius: 70px;"></td>
+                        <td class="align-content-center"><?php
                         switch ($user_list['role']) {
                             case "1":
                                 echo "admin";
@@ -73,9 +74,9 @@ $pagination_link = ceil($row_count/3);
                                 break;
                         }?>
                     </td>
-                     <td>
+                     <td class="align-content-center">
                     <?php if ($user_list['id'] === $user['id']) { ?>
-                      <button class="btn btn-sm btn-primary"><i class="fa fa-pen"></i></button>
+                      <a href="./add_user.php?user_id=<?= $user_list['id'] ?>" class="btn btn-sm btn-primary"><i class="fa fa-pen"></i></>
                     <?php } else { ?>
                       <button class="btn btn-sm btn-danger deleteUser" data-value="<?= $user_list['id']; ?>" data-bs-toggle = "modal" data-bs-target="#deleteModal"><i class="fa fa-trash"></i></button>
                     <?php } ?>

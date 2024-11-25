@@ -8,6 +8,6 @@ if($user['role'] == 1){
     header("Location:./cashier/index.php");
 } elseif($user['role'] == 3){
     header("Location:./kitchen/index.php");
-} elseif($user['role'] == 5){
+} elseif($user['role'] == 4){
     header("Location:./waiter/index.php");
 }
