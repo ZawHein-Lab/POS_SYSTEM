@@ -15,7 +15,8 @@ if (isset($_COOKIE['user'])) {
 // }
 if (have_admin($mysqli)) {
     $admin_password = password_hash("password", PASSWORD_BCRYPT);
-    save_user($mysqli, "admin", "admin@gmail.com", $admin_password, 1, "profile.png");
+    save_user($mysqli, "admin", "admin@gmail.com", "profile.png", $admin_password, 1);
+    // save_user($mysqli, $username, $useremail, $profile, $password, $role)
 }
 
 $email = $email_err = $password = $password_err = "";
@@ -63,10 +64,16 @@ if (isset($_POST['useremail'])) {
 <body>
     <div class="card mx-auto w-50" style="margin-top: 120px;">
         <div class="mb-5 mt-4">
-            <div class="card-title">
+            <div class="card-title w-75 mx-auto">
                 <h3 class="text-center mb-2">Login Form</h3>
                 <?php if (isset($_GET['invalid'])) { ?>
-                    <div class="alert alert-danger"><?= $_GET['invalid'] ?></div>
+                    <!-- <div class="alert alert-danger"><?= $_GET['invalid'] ?></div> -->
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <strong><?= $_GET['invalid'] ?></strong>
+                        <button type="button" class=" btn-close close" data-bs-dismiss="alert" aria-label="Close">
+                            <!-- <span aria-hidden="true">&times;</span> -->
+                        </button>
+                    </div>
                 <?php } ?>
             </div>
             <form class="form-group w-75 mx-auto" method="POST">

@@ -2,7 +2,6 @@
 <?php require_once("../storage/user_crud.php") ?>
 <?php require_once("../storage/category_crud.php") ?>
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>

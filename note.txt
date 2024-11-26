@@ -1,0 +1,6 @@
+trim for user name
+
+check email 
+form height when validation message show 
+remember me to do 
+UI follow with list design

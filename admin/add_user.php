@@ -22,9 +22,6 @@ if (isset($_GET['user_id'])) {
     $profile_name = $users['image'];
     $role = $users['role'];
     $old_user_password = $users['password'];
-    //var_dump($old_password);
-    //var_dump($profile_name);
-
 }
 if (isset($_POST['submit'])) {
     $user_name = $_POST['username'];
@@ -35,11 +32,6 @@ if (isset($_POST['submit'])) {
     $profile = $_FILES['profile'];
     $profile_name = $profile['name'];
     $tmp_name = $profile['tmp_name'];
-
-    // $old_input_user_password = $_POST['old_password'];
-    // var_dump($profile_name);
-    // echo $user_name;
-    // echo $role;
     if ($user_name === "") {
         $user_name_err = "Name cann't be blank";
         $invalid = false;
@@ -182,20 +174,20 @@ if (isset($_POST['submit'])) {
                             </div>
                         <?php } ?>
                         <div class="form-input-group-sm mb-2">
-                        <?php if (isset($_GET['user_id'])) { ?>
+                            <?php if (isset($_GET['user_id'])) { ?>
                                 <label for="confirmPassword" class="form-label">New Password</label>
-                        <?php }else{?>
-                            <label for="confirmPassword" class="form-label">Password</label>
-                        <?php }?>
+                            <?php } else { ?>
+                                <label for="confirmPassword" class="form-label">Password</label>
+                            <?php } ?>
                             <input type="password" value="<?= $password ?>" name="password" id="password" class="form-control" placeholder="Eneter user password.....">
                             <i class="text-danger text-sm-start"><?= $password_err ?></i>
                         </div>
                         <div class="form-input-group-sm mb-2">
-                        <?php if (isset($_GET['user_id'])) { ?>
+                            <?php if (isset($_GET['user_id'])) { ?>
                                 <label for="confirmPassword" class="form-label">Confirm New Password</label>
-                        <?php }else{?>
-                            <label for="confirmPassword" class="form-label">Confirm Password</label>
-                        <?php }?>
+                            <?php } else { ?>
+                                <label for="confirmPassword" class="form-label">Confirm Password</label>
+                            <?php } ?>
                             <input type="password" value="<?= $confirm_password ?>" name="confirmPassword" id="confirmPassword" class="form-control" placeholder="Eneter user same password.....">
                             <i class="text-danger text-sm-start"><?= $confirm_password_err ?></i>
                         </div>
