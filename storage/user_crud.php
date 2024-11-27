@@ -52,7 +52,7 @@ function get_users($mysqli)
 }
 function get_password_with_currentuserid($mysqli, $user_id)
 {
-    $sql = "SELECT `password` FROM `user` WHERE `id`= $user_id";;
+    $sql = "SELECT * FROM `user` WHERE `id`= $user_id";;
     $user = $mysqli->query($sql);
     return $user->fetch_assoc();
 }
@@ -66,9 +66,14 @@ function get_user_with_offset($mysqli, $offset, $limit)
     $sql = "SELECT * FROM user LIMIT $limit OFFSET $offset";
     return $mysqli->query($sql);
 }
+function get_search_user_with_offset($mysqli, $offset, $limit,$search)
+{
+    $sql = "SELECT * FROM user  WHERE `username` LIKE '%$search%' LIMIT $limit OFFSET $offset";
+    return $mysqli->query($sql);
+}
 function get_user_with_email($mysqli, $email)
 {
-    $sql = "SELECT * FROM `user` WHERE `useremail`='$email'";
+    $sql = "SELECT  `id`,`username`,`useremail`,`role`,`password` FROM `user` WHERE `useremail`='$email'";
     $user = $mysqli->query($sql);
     return $user->fetch_assoc();
 }

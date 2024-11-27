@@ -3,7 +3,7 @@ require_once("../auth/isLogin.php")
 ?>
 
 <?php
-$profile = $profile_err = "";
+$fileName_err = "";
 $user_name = $user_name_err = "";
 $user_email = $user_email_err = "";
 $password  = $password_err = "";
@@ -29,9 +29,12 @@ if (isset($_POST['submit'])) {
     $password = $_POST['password'];
     $confirm_password = $_POST['confirmPassword'];
     $role = $_POST['role'];
-    $profile = $_FILES['profile'];
-    $profile_name = $profile['name'];
-    $tmp_name = $profile['tmp_name'];
+
+    $fileTmpPath = $_FILES['profile']['tmp_name'];
+    $fileName = $_FILES['profile']['name'];
+    $fileSize = $_FILES['profile']['size'];
+    $fileType = $_FILES['profile']['type'];
+
     if ($user_name === "") {
         $user_name_err = "Name cann't be blank";
         $invalid = false;
@@ -41,6 +44,7 @@ if (isset($_POST['submit'])) {
             $invalid = false;
         }
     }
+
     if ($user_email === "") {
         $user_email_err = "Email cann't be blank";
         $invalid = false;
@@ -50,14 +54,16 @@ if (isset($_POST['submit'])) {
             $invalid = false;
         }
     }
+
     if ($role === "") {
         $role_err = "Please select role";
         $invalid = false;
     }
-    if ($profile_name === "") {
-        $profile_err = "Please Choose image";
-        $invalid = false;
-    }
+    // if ($fileName === "") {
+    //     $fileName_err = "Please choose image";
+    //     $invalid = false;
+    // }
+
     if ($password === "") {
         $password_err = "Password cann't be blank";
         $invalid = false;
@@ -80,28 +86,71 @@ if (isset($_POST['submit'])) {
         if (isset($_GET['user_id'])) {
             $user_id = $_GET['user_id'];
             $get_password =  get_password_with_currentuserid($mysqli, $user_id);
+            $oldImageName = $get_password['image'];
             $hashedOldPassword = $get_password['password'];
+            // var_dump($oldImageName);
             $old_password = $_POST['old_password'];
+            if ($old_password == '') {
+                $old_password_err = "Current password cann't be blank";
+            }
             if (password_verify($old_password,  $hashedOldPassword)) {
                 $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-                $status = update_user($mysqli, $user_name, $user_email, $profile_name, $hashedPassword, $role, $user_id);
-                if ($status === true) {
-                    move_uploaded_file($profile['tmp_name'], "../assets/image/" . $profile_name);
-                    header("Location:./user_list.php");
+                $get_password =  get_password_with_currentuserid($mysqli, $user_id);
+                $oldImageName = $get_password['image'];
+                // var_dump($oldImageName);
+                if (isset($oldImageName)) {
+                    // $fileName = $oldImageName;
+                    $status = update_user($mysqli, $user_name, $user_email, $oldImageName, $hashedPassword, $role, $user_id);
+                    if ($status === true) {
+                        // move_uploaded_file($tmp_name, "../assets/image/" . $base64Image);
+                        // header("Location:./user_list.php");
+                        echo "<script>location.replace('./user_list.php')</script>";
+                    } else {
+                        $fail_query = $status;
+                    }
                 } else {
-                    $fail_query = $status;
+                    $fileTmpPath = $_FILES['profile']['tmp_name'];
+                    $fileName = $_FILES['profile']['name'];
+                    $targetDir = '../assets/image/';
+                    $newFileName = uniqid('img_') . '.' . pathinfo($fileName, PATHINFO_EXTENSION);  // Generate a unique file name
+                    $targetFilePath = $targetDir . $newFileName;
+                    $imageData = file_get_contents($fileTmpPath);
+                    $base64Image = base64_encode($imageData);
+                    if (move_uploaded_file($fileTmpPath, $targetFilePath)) {
+                        // Convert the image file to base64
+
+                        $status = update_user($mysqli, $user_name, $user_email, $base64Image, $hashedPassword, $role, $user_id);
+                        if ($status === true) {
+                            // move_uploaded_file($tmp_name, "../assets/image/" . $base64Image);
+                            // header("Location:./user_list.php");
+                            echo "<script>location.replace('./user_list.php')</script>";
+                        } else {
+                            $fail_query = $status;
+                            // echo $fail_query;
+                        }
+                    }
                 }
             } else {
                 $old_password_err = "Current password does not match";
             }
         } else {
-            $status = save_user($mysqli, $user_name, $user_email, $profile_name, $hashedPassword, $role);
-            if ($status === true) {
-                move_uploaded_file($profile['tmp_name'], "../assets/image/" . $profile_name);
-                header("Location:./user_list.php");
-            } else {
-                $fail_query = $status;
-                // echo $fail_query;
+            $targetDir = '../assets/image/';
+            $newFileName = uniqid('img_') . '.' . pathinfo($fileName, PATHINFO_EXTENSION);  // Generate a unique file name
+            $targetFilePath = $targetDir . $newFileName;
+            $imageData = file_get_contents($fileTmpPath);
+            $base64Image = base64_encode($imageData);
+
+            // Move the uploaded file to the target directory
+            if (move_uploaded_file($fileTmpPath, $targetFilePath)) {
+                // Convert the image file to base64
+                $status = save_user($mysqli, $user_name, $user_email, $base64Image, $hashedPassword, $role);
+                if ($status === true) {
+                    // move_uploaded_file($tmp_name, "../assets/image/" . $base64Image);
+                    header("Location:./user_list.php");
+                } else {
+                    $fail_query = $status;
+                    // echo $fail_query;
+                }
             }
         }
     }
@@ -161,23 +210,19 @@ if (isset($_POST['submit'])) {
                         <div class="form-input-group-sm mb-2">
                             <label for="profile" class="form-label">Photo</label>
                             <input type="file" value="<?= $profile_name ?>" name="profile" id="profile" class="form-control">
-                            <?php if (isset($_GET['user_id'])): ?>
-                                <p>Uploaded File: <?= htmlspecialchars($profile_name) ?></p>
-                            <?php endif; ?>
-                            <i class="text-danger text-sm-start"><?= $profile_err ?></i>
+                            <i class="text-danger text-sm-start"><?= $fileName_err ?></i>
                         </div>
                         <?php if (isset($_GET['user_id'])) { ?>
                             <div class="form-input-group-sm mb-2">
                                 <label for="old_password" class="form-label">Old Password</label>
                                 <input type="password" name="old_password" id="old_password" class="form-control" placeholder="Eneter user password.....">
-                                <i class="text-danger text-sm-start"><?= $old_password_err ?></i>
                             </div>
                         <?php } ?>
                         <div class="form-input-group-sm mb-2">
                             <?php if (isset($_GET['user_id'])) { ?>
                                 <label for="confirmPassword" class="form-label">New Password</label>
                             <?php } else { ?>
-                                <label for="confirmPassword" class="form-label">Password</label>
+                                <label for="Password" class="form-label">Password</label>
                             <?php } ?>
                             <input type="password" value="<?= $password ?>" name="password" id="password" class="form-control" placeholder="Eneter user password.....">
                             <i class="text-danger text-sm-start"><?= $password_err ?></i>

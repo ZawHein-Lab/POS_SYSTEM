@@ -16,7 +16,7 @@ try {
 // auto create all table when our index page is loaded
 function create_table($mysqli)
 {
-    $sql = "CREATE TABLE IF NOT EXISTS `user`(`id` INT AUTO_INCREMENT,`username` VARCHAR(70) NOT NULL,`useremail` VARCHAR(70) UNIQUE,`image` VARCHAR(225) NOT NULL,`password` VARCHAR(220) NOT NULL,`role` INT NOT NULL,PRIMARY KEY(`id`))";
+    $sql = "CREATE TABLE IF NOT EXISTS `user`(`id` INT AUTO_INCREMENT,`username` VARCHAR(70) NOT NULL,`useremail` VARCHAR(70) UNIQUE,`image` LONGTEXT NOT NULL,`password` VARCHAR(220) NOT NULL,`role` INT NOT NULL,PRIMARY KEY(`id`))";
     // var_dump($mysqli->query($sql));
     if (!$mysqli->query($sql)) {
         return false;

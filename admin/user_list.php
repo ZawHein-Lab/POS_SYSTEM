@@ -5,11 +5,20 @@ if (isset($_GET['deleteId'])) {
     $deleteId = $_GET['deleteId'];
     delete_user($mysqli, $deleteId);
 };
-
-$row = get_users($mysqli);
-$row_count = COUNT($row->fetch_all()); //get number of users
-
-$pagination_link = ceil($row_count / 3);
+if (isset($_POST['search_data'])) {
+    // if ($_POST['search_data'] != "") {
+        $searchData = $_POST['search_data'];
+        $row =  get_data_with_search_data($mysqli, $searchData);
+        global $row_count;
+        $row_count = COUNT($row->fetch_all());
+        $pagination_link = ceil($row_count / 3); 
+    // }
+}else{
+    $row = get_users($mysqli);
+    global $row_count;
+    $row_count  = COUNT($row->fetch_all()); //get number of users
+    $pagination_link = ceil($row_count / 3);
+}
 
 $limit = 3;
 $page = isset($_GET['pageNo']) ? intval($_GET['pageNo']) : 1;
@@ -40,17 +49,21 @@ $numberTitle = ($page * $limit) - $limit;
                             if ($_POST['search_data'] != "") {
                                 $searchData = $_POST['search_data'];
                                 // echo $searchData;
-                                $users =   get_data_with_search_data($mysqli, $searchData);
+                                // $users =   get_data_with_search_data($mysqli, $searchData);
+                                $users = get_search_user_with_offset($mysqli, $offset, $limit,$searchData);
+                                // $users =  get_search_user_with_offset($mysqli, $offset, $limit,$searchData);
+
                             }
                         }
+                       
                         while ($user_list = $users->fetch_assoc()) {
-                            // var_dump($user_list);
                         ?>
                             <tr>
                                 <td class="align-content-center"><?= $numberTitle + 1 ?></td>
                                 <td class="align-content-center"><?= $user_list['username'] ?></td>
                                 <td class="align-content-center"><?= $user_list['useremail'] ?></td>
-                                <td class="align-content-center"> <img class="userImage" src="../assets/image/<?= $user_list['image'] ?>" style="width: 80px; height: 80px; border-radius: 70px;"></td>
+                                <td class="align-content-center">
+                                <img class="align-content-center" src="data:image;base64,<?= $user_list['image'] ?>" style="width: 80px; height: 80px; border-radius: 70px;"></td>
                                 <td class="align-content-center"><?php
                                                                     switch ($user_list['role']) {
                                                                         case "1":

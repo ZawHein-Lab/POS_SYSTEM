@@ -4,3 +4,4 @@ check email
 form height when validation message show 
 remember me to do 
 UI follow with list design
+when delete we can delete with js update

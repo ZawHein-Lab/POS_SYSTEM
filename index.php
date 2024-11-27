@@ -33,7 +33,7 @@ if (isset($_POST['useremail'])) {
     }
     if ($email_err === "" && $password_err === "") {
         $user = get_user_with_email($mysqli, $email);
-        // var_dump($user['password']);
+        // var_dump($user);
         if (!$user) {
             $email_err = "User does not exist!";
         } else {
