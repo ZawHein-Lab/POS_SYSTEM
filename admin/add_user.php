@@ -95,22 +95,28 @@ if (isset($_POST['submit'])) {
             }
             if (password_verify($old_password,  $hashedOldPassword)) {
                 $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-                $get_password =  get_password_with_currentuserid($mysqli, $user_id);
-                $oldImageName = $get_password['image'];
+               
                 // var_dump($oldImageName);
-                if (isset($oldImageName)) {
-                    // $fileName = $oldImageName;
-                    $status = update_user($mysqli, $user_name, $user_email, $oldImageName, $hashedPassword, $role, $user_id);
-                    if ($status === true) {
-                        // move_uploaded_file($tmp_name, "../assets/image/" . $base64Image);
-                        // header("Location:./user_list.php");
-                        echo "<script>location.replace('./user_list.php')</script>";
-                    } else {
-                        $fail_query = $status;
-                    }
-                } else {
-                    $fileTmpPath = $_FILES['profile']['tmp_name'];
+                // $fileName = $_FILES['profile']['name'];
+                if (!file_exists($fileName)) {
+                    $get_password =  get_password_with_currentuserid($mysqli, $user_id);
+                    $oldImageName = $get_password['image'];
+                     // $fileName = $oldImageName;
+                    //  var_dump($oldImageName);
+                     $status = update_user($mysqli, $user_name, $user_email, $oldImageName, $hashedPassword, $role, $user_id);
+                     if ($status === true) {
+                         // move_uploaded_file($tmp_name, "../assets/image/" . $base64Image);
+                         // header("Location:./user_list.php");
+                         echo "<script>location.replace('./user_list.php')</script>";
+                     } else {
+                         $fail_query = $status;
+                     }
+                }  
+                if(isset($fileName)) {
+                  
                     $fileName = $_FILES['profile']['name'];
+                    $fileTmpPath = $_FILES['profile']['tmp_name'];
+                    var_dump($fileName);
                     $targetDir = '../assets/image/';
                     $newFileName = uniqid('img_') . '.' . pathinfo($fileName, PATHINFO_EXTENSION);  // Generate a unique file name
                     $targetFilePath = $targetDir . $newFileName;
