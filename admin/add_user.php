@@ -54,16 +54,18 @@ if (isset($_POST['submit'])) {
             $invalid = false;
         }
     }
+    if(!isset($_GET['user_id'])){
+        if ($fileName === "") {
+            $fileName_err = "Please choose image";
+            $invalid = false;
+        }
+    }
 
     if ($role === "") {
         $role_err = "Please select role";
         $invalid = false;
     }
-    // if ($fileName === "") {
-    //     $fileName_err = "Please choose image";
-    //     $invalid = false;
-    // }
-
+    
     if ($password === "") {
         $password_err = "Password cann't be blank";
         $invalid = false;
@@ -140,6 +142,7 @@ if (isset($_POST['submit'])) {
                 $old_password_err = "Current password does not match";
             }
         } else {
+
             $targetDir = '../assets/image/';
             $newFileName = uniqid('img_') . '.' . pathinfo($fileName, PATHINFO_EXTENSION);  // Generate a unique file name
             $targetFilePath = $targetDir . $newFileName;
