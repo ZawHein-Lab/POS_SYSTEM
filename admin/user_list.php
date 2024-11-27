@@ -5,25 +5,26 @@ if (isset($_GET['deleteId'])) {
     $deleteId = $_GET['deleteId'];
     delete_user($mysqli, $deleteId);
 };
-if (isset($_POST['search_data'])) {
-    // if ($_POST['search_data'] != "") {
-        $searchData = $_POST['search_data'];
-        $row =  get_data_with_search_data($mysqli, $searchData);
-        global $row_count;
-        $row_count = COUNT($row->fetch_all());
-        $pagination_link = ceil($row_count / 3); 
-    // }
-}else{
-    $row = get_users($mysqli);
-    global $row_count;
-    $row_count  = COUNT($row->fetch_all()); //get number of users
-    $pagination_link = ceil($row_count / 3);
-}
-
+// $searchData ="";
 $limit = 3;
 $page = isset($_GET['pageNo']) ? intval($_GET['pageNo']) : 1;
 $offset = ($page - 1) * $limit;
 $numberTitle = ($page * $limit) - $limit;
+
+    if (isset($_GET['search_data'])) {
+            $searchData = $_GET['search_data'];
+            $row =  get_data_with_search_data($mysqli, $searchData);
+            $row_count = COUNT($row->fetch_all());
+            $pagination_link = ceil($row_count / 3); 
+            $users = get_search_user_with_offset($mysqli, $offset, $limit, $searchData);
+    }else{
+        $row = get_users($mysqli);
+        $row_count  = COUNT($row->fetch_all()); //get number of users
+        $pagination_link = ceil($row_count / 3);
+        $users = get_user_with_offset($mysqli, $offset, $limit);
+    }
+
+
 ?>
 <!-- //to get userid from cookie name -->
 <div class="main">
@@ -44,18 +45,7 @@ $numberTitle = ($page * $limit) - $limit;
                         </tr>
                     </thead>
                     <tbody>
-                        <?php $users = get_user_with_offset($mysqli, $offset, $limit);
-                        if (isset($_POST['search_data'])) {
-                            if ($_POST['search_data'] != "") {
-                                $searchData = $_POST['search_data'];
-                                // echo $searchData;
-                                // $users =   get_data_with_search_data($mysqli, $searchData);
-                                $users = get_search_user_with_offset($mysqli, $offset, $limit,$searchData);
-                                // $users =  get_search_user_with_offset($mysqli, $offset, $limit,$searchData);
-
-                            }
-                        }
-                       
+                        <?php
                         while ($user_list = $users->fetch_assoc()) {
                         ?>
                             <tr>
@@ -63,7 +53,7 @@ $numberTitle = ($page * $limit) - $limit;
                                 <td class="align-content-center"><?= $user_list['username'] ?></td>
                                 <td class="align-content-center"><?= $user_list['useremail'] ?></td>
                                 <td class="align-content-center">
-                                <img class="align-content-center" src="data:image;base64,<?= $user_list['image'] ?>" style="width: 80px; height: 80px; border-radius: 70px;"></td>
+                                <img class="align-content-center" src="../assets/image/<?= $user_list['image']?>" style="width: 80px; height: 80px; border-radius: 70px;"></td>
                                 <td class="align-content-center"><?php
                                                                     switch ($user_list['role']) {
                                                                         case "1":
@@ -98,17 +88,17 @@ $numberTitle = ($page * $limit) - $limit;
                     <nav>
                         <ul class="pagination justify-content-center">
                             <li class="page-item <?php if ($page <= 1) echo 'disabled' ?>">
-                                <a class="page-link" href="?pageNo=<?= $page - 1; ?>">Previous</a>
+                                <a class="page-link" href="?pageNo=<?= $page - 1; ?>&search_data=<?= isset($searchData) ? urlencode($searchData) : ''; ?>">Previous</a>
                             </li>
                             <?php $j = 1;
                             while ($pagination_link >= $j) { ?>
                                 <li class="page-item">
-                                    <a class="page-link <?php if ($page == $j) echo 'active' ?>" href="?pageNo=<?= $j ?>"><?php echo $j; ?></a>
+                                    <a class="page-link <?php if ($page == $j) echo 'active' ?>" href="?pageNo=<?= $j ?>&search_data=<?= isset($searchData) ? urlencode($searchData) : ''; ?>"><?php echo $j; ?></a>
                                 </li>
                             <?php $j++;
                             } ?>
                             <li class="page-item <?php if ($pagination_link == $page) echo 'disabled' ?>">
-                                <a class="page-link"" href=" ?pageNo=<?= $page + 1; ?>">Next</a>
+                                <a class="page-link"" href=" ?pageNo=<?= $page + 1; ?>&search_data=<?= isset($searchData) ? urlencode($searchData) : ''; ?>">Next</a>
                             </li>
                         </ul>
                     </nav>

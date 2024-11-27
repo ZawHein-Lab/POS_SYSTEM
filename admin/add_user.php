@@ -54,7 +54,7 @@ if (isset($_POST['submit'])) {
             $invalid = false;
         }
     }
-    if(!isset($_GET['user_id'])){
+    if (!isset($_GET['user_id'])) {
         if ($fileName === "") {
             $fileName_err = "Please choose image";
             $invalid = false;
@@ -65,7 +65,7 @@ if (isset($_POST['submit'])) {
         $role_err = "Please select role";
         $invalid = false;
     }
-    
+
     if ($password === "") {
         $password_err = "Password cann't be blank";
         $invalid = false;
@@ -97,37 +97,48 @@ if (isset($_POST['submit'])) {
             }
             if (password_verify($old_password,  $hashedOldPassword)) {
                 $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-               
                 // var_dump($oldImageName);
                 // $fileName = $_FILES['profile']['name'];
                 if (!file_exists($fileName)) {
                     $get_password =  get_password_with_currentuserid($mysqli, $user_id);
                     $oldImageName = $get_password['image'];
-                     // $fileName = $oldImageName;
+                    // $fileName = $oldImageName;
                     //  var_dump($oldImageName);
-                     $status = update_user($mysqli, $user_name, $user_email, $oldImageName, $hashedPassword, $role, $user_id);
-                     if ($status === true) {
-                         // move_uploaded_file($tmp_name, "../assets/image/" . $base64Image);
-                         // header("Location:./user_list.php");
-                         echo "<script>location.replace('./user_list.php')</script>";
-                     } else {
-                         $fail_query = $status;
-                     }
-                }  
-                if(isset($fileName)) {
-                  
+                    $status = update_user($mysqli, $user_name, $user_email, $oldImageName, $hashedPassword, $role, $user_id);
+                    if ($status === true) {
+                        // move_uploaded_file($tmp_name, "../assets/image/" . $base64Image);
+                        // header("Location:./user_list.php");
+                        echo "<script>location.replace('./user_list.php')</script>";
+                    } else {
+                        $fail_query = $status;
+                    }
+                }
+                if (isset($_FILES['profile'])) {
+                    if(isset($_POST['profile'])){
+                        $get_password =  get_password_with_currentuserid($mysqli, $user_id);
+                        $oldImageName = $get_password['image'];
+                        $filePath = '../assets/image/' . $oldImageName;
+                        // Check if the file exists
+                        if (file_exists($filePath)) {
+                            // Attempt to delete the file
+                            if (unlink($filePath)) {
+                                echo "The file 'profile.png' was deleted successfully.";
+                            }
+                        }
+                    }
+
                     $fileName = $_FILES['profile']['name'];
                     $fileTmpPath = $_FILES['profile']['tmp_name'];
-                    var_dump($fileName);
+                    // var_dump($fileName);
                     $targetDir = '../assets/image/';
                     $newFileName = uniqid('img_') . '.' . pathinfo($fileName, PATHINFO_EXTENSION);  // Generate a unique file name
                     $targetFilePath = $targetDir . $newFileName;
-                    $imageData = file_get_contents($fileTmpPath);
-                    $base64Image = base64_encode($imageData);
+                    // $imageData = file_get_contents($fileTmpPath);
+                    // $base64Image = base64_encode($imageData);
                     if (move_uploaded_file($fileTmpPath, $targetFilePath)) {
                         // Convert the image file to base64
 
-                        $status = update_user($mysqli, $user_name, $user_email, $base64Image, $hashedPassword, $role, $user_id);
+                        $status = update_user($mysqli, $user_name, $user_email,  $newFileName, $hashedPassword, $role, $user_id);
                         if ($status === true) {
                             // move_uploaded_file($tmp_name, "../assets/image/" . $base64Image);
                             // header("Location:./user_list.php");
@@ -142,17 +153,16 @@ if (isset($_POST['submit'])) {
                 $old_password_err = "Current password does not match";
             }
         } else {
-
             $targetDir = '../assets/image/';
             $newFileName = uniqid('img_') . '.' . pathinfo($fileName, PATHINFO_EXTENSION);  // Generate a unique file name
             $targetFilePath = $targetDir . $newFileName;
-            $imageData = file_get_contents($fileTmpPath);
-            $base64Image = base64_encode($imageData);
+            // $imageData = file_get_contents($fileTmpPath);
+            // $base64Image = base64_encode($imageData);
 
             // Move the uploaded file to the target directory
             if (move_uploaded_file($fileTmpPath, $targetFilePath)) {
                 // Convert the image file to base64
-                $status = save_user($mysqli, $user_name, $user_email, $base64Image, $hashedPassword, $role);
+                $status = save_user($mysqli, $user_name, $user_email, $newFileName, $hashedPassword, $role);
                 if ($status === true) {
                     // move_uploaded_file($tmp_name, "../assets/image/" . $base64Image);
                     header("Location:./user_list.php");

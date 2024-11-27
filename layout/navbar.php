@@ -1,7 +1,7 @@
 <div class="navbar">
     <div class="leftNavBar">
         <div class="search-container">
-            <form action="" method="post">
+            <form action="" method="get">
                 <input type="text" name="search_data" placeholder="Search..." class="search-input">
                 <button class="search-btn" name="search">
                     <i class="fas fa-search"></i>
